@@ -10,21 +10,15 @@ Retention and deletion policies can only be started or overridden by administrat
 - **Account and profile data (all roles)**
 
 Information about the account and profile is kept for as long as the account is active.
-
 An account is soft-deactivated, that is, its status is converted to inactive when a user deactivates it.
-
 This instantly stops additional access while retaining system integrity, including historical accountability and audit trail continuity.
 
 - **User-submitted health data (forms, submissions, entries)**
 
 Health data submitted by users is retained while the user's account is active in order to support dashboards, reporting, and healthcare provider review.
-
 When a user deactivates their account, no more data collection or provider access is allowed, and access to their health data is prohibited.
-
 After deactivation, the data is put into an inactive state and kept for up to a year in order to fulfill operational requirements like handling disputes or access requests.
-
 Following this time frame, the data is either anonymized or safely erased in compliance with the retention policy.
-
 This approach complies with PHIPA recommendations, which recommend maintaining records long enough for individuals to pursue suitable legal remedies, even though there isn't a set retention period.
 
 - **Aggregated and Anonymized Outputs (Cohort Summaries and Community Reports)**
@@ -34,7 +28,6 @@ If all privacy regulations, such as minimum cohort size and suppression of minor
 - **Research Artifacts (Reports, Versions, and Exports)**
 
 To facilitate traceability and repeatability, created reports and report versions are kept, enabling the system to describe what was generated, when it was generated, and under what circumstances.
-
 Exports in CSV format are regarded as sensitive outputs. The audit log is continually updated with export events. Instead of depending on long-term stored files, researchers must renew exports when necessary because CSV files are generated on demand and are not kept permanently.
 
 - **Governance Records (Audit Logs)**
@@ -86,6 +79,7 @@ Inactive user raw data retention: 1 year
 **CPSO, Medical Records Management**
 
 <https://www.cpso.on.ca/physicians/policies-guidance/policies/medical-records-management>
+
 
 
 
