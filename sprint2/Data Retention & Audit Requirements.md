@@ -1,4 +1,4 @@
-- **Data Retention & Deletion Rules**
+**1. Data Retention & Deletion Rules**
 
 The system manages personal and health-related data using the principle of "retain only as long as necessary." This implies that data is only retained for as long as it is necessary to meet the operational goals of the system, such as health tracking, reporting, and care assistance, or to guarantee accountability and dispute resolution. This strategy is in line with standard privacy guidelines, which place a strong emphasis on reducing data retention wherever feasible.
 
@@ -54,7 +54,7 @@ Records are securely deleted so that reconstruction is not reasonably foreseeabl
 
 Where appropriate, anonymization may be used instead of deletion to preserve statistical value while eliminating the risk of individual identification.
 
-- **Audit Logging Requirements and Retention Rules**
+**2. Audit Logging Requirements and Retention Rules**
 
 To guarantee accountability, openness, and security across the system, audit logging is used. Administrators can monitor usage, look into events, and show that sensitive data is handled responsibly thanks to the audit log, which offers a trustworthy record of important system actions.
 
@@ -128,4 +128,5 @@ Audit log retention: 2 years
 **AU-2 (Audit Events) and AU-11 (Audit Record Retention)**
 
 <https://csf.tools/reference/nist-sp-800-53/r5/au/>
+
 
