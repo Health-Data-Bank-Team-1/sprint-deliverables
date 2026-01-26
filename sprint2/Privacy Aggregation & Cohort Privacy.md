@@ -33,14 +33,15 @@ All cohort definitions and cohort-based report requests are validated by the sys
 These cohort privacy regulations guarantee that population-level analysis can be carried out securely without disclosing private data about vulnerable people. The approach mirrors established practices in public-health dashboards, where small counts are suppressed and cohort definitions are tightly constrained to prevent re-identification.
 
 
-**References Used:**
-**Khaled El Emam, PhD, Fida Kamal Dankar, MSc (2008)
+**References Used:
+Khaled El Emam, PhD, Fida Kamal Dankar, MSc (2008)
 Protecting Privacy Using k-Anonymity**
 https://pmc.ncbi.nlm.nih.gov/articles/PMC2528029/
 
 **Utrecht University
 K-anonymity, l-diversity and t-closeness**
 https://utrechtuniversity.github.io/dataprivacyhandbook/k-l-t-anonymity.html
+
 
 
 
