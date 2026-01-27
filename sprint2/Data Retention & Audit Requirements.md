@@ -85,7 +85,9 @@ For the purpose of supporting security investigations, compliance reviews, and d
 
 In compliance with system governance policies, audit logs may be safely archived or removed when the retention time has passed. Reconstruction of audit records is not reasonably foreseeable thanks to secure disposal.
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------**Reasonings:**
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Reasonings:**
 
 **Inactive user raw data retention: 1 year**
 
@@ -116,7 +118,8 @@ In compliance with system governance policies, audit logs may be safely archived
   - Short enough to avoid unnecessary accumulation
   - Common in academic, institutional, and mid-sized systems
   
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 **References**:
 
 **PIPEDA Fair Information Principle 5 - Limiting Use, Disclosure, and Retention, (2020)**
@@ -132,6 +135,7 @@ In compliance with system governance policies, audit logs may be safely archived
 **AU-2 (Audit Events) and AU-11 (Audit Record Retention)**
 
 <https://csf.tools/reference/nist-sp-800-53/r5/au/>
+
 
 
 
