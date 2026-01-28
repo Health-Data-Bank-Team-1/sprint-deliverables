@@ -1,6 +1,6 @@
 [link to mockups](https://whimsical.com/mockups-UwyUKZPVPWLqR1BtCrVTwU)
 
-## Login/Register/Account Settings
+# Login/Register/Account Settings
 
 ### Login
 ![](./mockup-imgs/login.png)
@@ -11,58 +11,106 @@
 ### Account Settings
 ![](./mockup-imgs/account-settings.png)
 
-## User
+# User
 
 ### User Homepage
-![](./mockup-imgs/user-homepage.png)
+![](./mockup-imgs/user-home.png)
+
+### User Homepage v2
+![](./mockup-imgs/user-home-v2.png)
 
 ### User Form Selection
-![](./mockup-imgs/form-selection.png)
+![](./mockup-imgs/user-formview.png)
+
+### User Form Selection v2
+![](./mockup-imgs/user-formview-v2.png)
 
 ### User Form Fillout
-![](./mockup-imgs/form-fillout.png)
+![](./mockup-imgs/user-formfillout.png)
+
+### User Form Fillout v2
+![](./mockup-imgs/user-formfillout-v2.png)
 
 ### User Progress
 ![](./mockup-imgs/user-progress.png)
 
+### User Progress v2
+![](./mockup-imgs/user-progress-v2.png)
+
 ### User TODO List
 ![](./mockup-imgs/user-todo.png)
 
-## Researcher
+### User TODO List v2
+![](./mockup-imgs/user-todo-v2.png)
+
+# Researcher
 
 ### Researcher Homepage
-![](./mockup-imgs/researcher-home.png)
+![](./mockup-imgs/res-home.png)
+
+### Researcher Homepage v2
+![](./mockup-imgs/res-home-v2.png)
 
 ### Researcher Report Viewer
-![](./mockup-imgs/researcher-report-view.png)
+![](./mockup-imgs/res-reportview.png)
+
+### Researcher Report Viewer v2
+![](./mockup-imgs/res-repview-v2.png)
 
 ### Researcher Report Generator
-![](./mockup-imgs/researcher-report-generator.png)
+![](./mockup-imgs/res-reportgen.png)
+
+### Researcher Report Generator v2
+![](./mockup-imgs/res-report-gen-v2.png)
 
 ### Researcher Form Viewer
-![](./mockup-imgs/researcher-form-view.png)
+![](./mockup-imgs/res-formview.png)
+
+### Researcher Form Viewer v2
+![](./mockup-imgs/res-formview-v2.png)
 
 ### Researcher Form Editor
-![](./mockup-imgs/researcher-form-editor.png)
+![](./mockup-imgs/res-formedit.png)
 
-## Healthcare Provider
+### Researcher Form Editor
+![](./mockup-imgs/res-formedit-v2.png)
+
+# Healthcare Provider
 
 ### Healthcare Provider Homepage
-![](./mockup-imgs/provider-homepage.png)
+![](./mockup-imgs/hc-home.png)
+
+### Healthcare Provider Homepage v2
+![](./mockup-imgs/hc-home-v2.png)
 
 ### Healthcare Provider Report Viewer
-![](./mockup-imgs/provider-report-view.png)
+![](./mockup-imgs/hc-reportview.png)
+
+### Healthcare Provider Report Viewer v2
+![](./mockup-imgs/hc-repview-v2.png)
 
 ### Healthcare Provider Report Generator
-![](./mockup-imgs/provider-report-generator.png)
+![](./mockup-imgs/hc-reportgen.png)
 
-## Admin
+### Healthcare Provider Report Generator v2
+![](./mockup-imgs/hc-repgen-v2.png)
+
+# Admin
 
 ### Admin Homepage
-![](./mockup-imgs/admin-homepage.png)
+![](./mockup-imgs/admin-home.png)
+
+### Admin Homepage v2
+![](./mockup-imgs/admin-home-v2.png)
 
 ### Admin Flagged Report Review
-![](./mockup-imgs/admin-flagged-report-review.png)
+![](./mockup-imgs/admin-flagrev.png)
+
+### Admin Flagged Report Review v2
+![](./mockup-imgs/admin-flagrev-v2.png)
 
 ### Admin Audit Log Review
-![](./mockup-imgs/admin-audit-log-review.png)
+![](./mockup-imgs/admin-logrev.png)
+
+### Admin Audit Log Review v2
+![](./mockup-imgs/admin-logrev-v2.png)
