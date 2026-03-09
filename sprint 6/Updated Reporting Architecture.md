@@ -1,4 +1,4 @@
-Sprint 6 **Reporting Architecture**
+**Reporting Architecture**
 
 **Purpose**
 
@@ -95,7 +95,7 @@ Controllers:
 
 **Actual controllers (implemented):**
 
-- **TrendController** (`app/Http/Controllers/Reporting/TrendController.php`)
+- **TrendController** (app/Http/Controllers/Reporting/TrendController.php)
   - Endpoint: GET /api/reporting/trends
   - Query params: metric (required), from (required), to (required), bucket (optional, default: day)
   - Validates inputs; metric must match regex ^[A-Za-z0-9_\-\.]+$
@@ -103,7 +103,7 @@ Controllers:
   - Logs reporting_trends_view audit event with metric, bucket, from, to
   - Returns: {metric, bucket, from, to, points: [{bucket_start, count, min, max, avg, latest, latest_at}, ...]}
 
-- **MeSummaryController** (`app/Http/Controllers/Api/MeSummaryController.php`)
+- **MeSummaryController** (app/Http/Controllers/Api/MeSummaryController.php)
   - Endpoint: GET /api/me/summary
   - Query params: from (required), to (required), keys (optional, comma-separated)
   - Validates date range; to must be after from
@@ -208,9 +208,41 @@ The system intelligently handles both numeric and non-numeric metric values:
 
 **Example:**
 
-health_entries record: { account_id: "user-123", timestamp: "2026-02-01T10:00:00Z", encrypted_values: { "hr": 72, "bp": "120", "notes": "felt good" } }
+```
+health_entries record: {
+  account_id: "user-123",
+  timestamp: "2026-02-01T10:00:00Z",
+  encrypted_values: { "hr": 72, "bp": "120", "notes": "felt good" }
+}
 
-Aggregation across multiple entries: { "hr": { count: 5, min: 68.0, max: 88.0, avg: 75.0, latest: 72, latest_at: "2026-02-01T18:00:00Z" }, "bp": { count: 5, min: 118.0, max: 132.0, avg: 125.0, latest: "120", latest_at: "2026-02-01T18:00:00Z" }, "notes": { count: 0, // non-numeric, no count min: null, max: null, avg: null, latest: "felt good", latest_at: "2026-02-01T18:00:00Z" } }
+Aggregation across multiple entries:
+{
+  "hr": {
+    count: 5,
+    min: 68.0,
+    max: 88.0,
+    avg: 75.0,
+    latest: 72,
+    latest_at: "2026-02-01T18:00:00Z"
+  },
+  "bp": {
+    count: 5,
+    min: 118.0,
+    max: 132.0,
+    avg: 125.0,
+    latest: "120",
+    latest_at: "2026-02-01T18:00:00Z"
+  },
+  "notes": {
+    count: 0,
+    min: null,
+    max: null,
+    avg: null,
+    latest: "felt good",
+    latest_at: "2026-02-01T18:00:00Z"
+  }
+}
+```
 
 **Security and Privacy Requirements**
 
@@ -296,25 +328,70 @@ Sprint 5 uses on-the-fly aggregation:
 }
 ```
 
-**Architecture Diagram**
+**Summary Response DTO:**
 
--  User (Dashboard) ->
-    
-- Reporting API (Controllers) ->
-     - TrendController (/api/reporting/trends)
-     - MeSummaryController (/api/me/summary)
-    
-- Reporting Services ->
-    - TrendCalculationService
-    - ReportingAggregationService
-    - PersonalSummaryService
-    - AuditLogger
+```json
+{
+  "from": "2026-02-01",
+  "to": "2026-02-28",
+  "averages": {
+    "hr": 75.5,
+    "bp": 125.0,
+    "weight": 170.2
+  },
+  "counts": {
+    "hr": 14,
+    "bp": 14,
+    "weight": 10
+  }
+}
+```
 
-- Database Layer ->
-    - health_entries (with encrypted_values JSONB)
-    - form_submissions (metadata)
+**Implementation Notes (Actual Code Structure)**
 
-- Response (JSON + Audit Log Entry) ->
-    - {metric, bucket, from, to, points: []}
-    - {from, to, averages, counts}
-    - audit record: {event, tags, metadata}
+```
+app/Http/Controllers/Reporting/TrendController.php          ← /api/reporting/trends
+app/Http/Controllers/Api/MeSummaryController.php            ← /api/me/summary
+app/Services/ReportingAggregationService.php                ← core aggregation logic
+app/Services/PersonalSummaryService.php                     ← summary wrapper
+app/Services/TrendCalculationService.php                    ← trend/bucketing logic
+app/Services/AuditLogger.php                                ← audit logging
+database/migrations/2026_02_03_014733_create_health_entries_table.php
+database/migrations/2026_02_03_014636_create_form_submissions_table.php
+tests/Feature/Reporting/TrendEndpointTest.php
+tests/Feature/Reporting/ReportingAggregationServiceTest.php
+tests/Feature/Reporting/ReportAccessAuditLogTest.php
+```
+
+**Architecture Diagram (Text)**
+
+```
+User (Dashboard)
+    ↓
+Reporting API (Controllers)
+    ├─ TrendController (/api/reporting/trends)
+    └─ MeSummaryController (/api/me/summary)
+    ↓
+Reporting Services
+    ├─ TrendCalculationService
+    ├─ ReportingAggregationService
+    ├─ PersonalSummaryService
+    └─ AuditLogger
+    ↓
+Database Layer
+    ├─ health_entries (with encrypted_values JSONB)
+    └─ form_submissions (metadata)
+    ↓
+Response (JSON + Audit Log Entry)
+    ├─ {metric, bucket, from, to, points: []}
+    ├─ {from, to, averages, counts}
+    └─ audit record: {event, tags, metadata}
+```
+
+**Future Considerations**
+
+1. **Cohort Comparison**: When implemented, requires cohort membership data structure and k-anonymity logic
+2. **CSV Export**: Design streaming response to handle large date ranges without memory issues
+3. **Metric Allowlisting**: Current implementation allows any metric name; future: restrict to pre-defined list per account type
+4. **Data Warehousing**: If reporting queries become bottleneck, consider pre-aggregated tables populated by scheduled jobs
+5. **Real-time Dashboards**: Consider caching strategy if summary/trends endpoints become hot path
