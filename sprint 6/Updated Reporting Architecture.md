@@ -347,6 +347,87 @@ Sprint 5 uses on-the-fly aggregation:
 }
 ```
 
+**Anonymization & Compliance**
+
+**Definition**
+
+Anonymization in the context of Sprint 5 reporting refers to the techniques used to prevent identification of individuals from aggregated health metrics. The system ensures that:
+
+- Individual health values are never returned in reporting endpoints
+- Only aggregated statistics (count, min, max, avg) are exposed
+- Latest values are included for context but aggregated results do not identify individuals
+- Data is scoped strictly to the requesting user or (in future) to cohorts meeting k-anonymity thresholds
+
+**Anonymization Mechanisms (Implemented)**
+
+1. **Aggregation-Only Return Policy**
+   - Reporting endpoints never return raw health entry data
+   - Only aggregated summaries and time-series are returned
+   - Latest values included for user context but not linked to individual entries
+
+2. **Metric-Level Aggregation**
+   - Each metric key is aggregated independently
+   - Aggregation produces: count (numeric only), min, max, avg (numeric only), latest (any), latest_at
+   - Individual data points are never enumerable from responses
+
+3. **Encrypted Storage at Rest**
+   - All individual health values stored in health_entries.encrypted_values (AES-256-CBC)
+   - Encryption key stored in environment (.env) and never exposed in logs
+   - Database-level encryption ensures raw data unreadable without decryption key
+
+4. **User-Scoped Access**
+   - All queries filtered by account_id = authenticated_user.account_id
+   - No cross-user data leakage possible
+   - Account linkage (user → account) verified at authentication layer
+
+5. **Sensitive Data Guards in Audit Logging**
+   - AuditLogger.guardAgainstSensitiveData() blocks logging of keys containing:
+     - password, pass, pwd, token, secret
+     - email, name, address
+     - dob, date_of_birth
+     - health, symptom, diagnosis, notes, form_response
+     - encrypted_values, responses
+   - Large text values (>500 chars) also blocked
+   - Fail-closed: throws InvalidArgumentException if sensitive key detected
+   - Only request parameters logged (metric, bucket, from, to), never data values
+  
+**De-Identification Standards (HIPAA Safe Harbor)**
+
+The system supports de-identification through:
+
+- Aggregate reporting: count, min, max, avg over multiple users (future cohort feature)
+- Suppression of small cohorts: k-anonymity threshold enforcement (future)
+- Exclusion of direct identifiers: account_id never returned in reporting responses
+- Expert determination: architecture reviewed and documented for compliance
+- No identifiable information: reporting responses contain only metrics, aggregates, and timestamps
+
+**K-Anonymity (Future Cohort Reporting)**
+
+When cohort comparison is implemented:
+
+- K-anonymity threshold default: k ≥ 5 (minimum 5 users in cohort)
+- Configurable per deployment: k adjustable in .env or config
+- Enforcement: aggregates suppressed if cohort < k
+- Response indicates suppression: {cohort: {status: "suppressed", member_count: 3, suppressed: true}}
+
+**Data Retention & Lifecycle**
+
+- **Storage Duration**: Health entries retained for user's account lifetime
+- **Audit Logs**: Retained for minimum 1 year (configurable)
+- **Future**: Data retention policy enforced via scheduled jobs (e.g., delete entries >N years old after user request)
+
+**Third-Party Compliance**
+
+- Laravel Sanctum: OAuth2/token-based auth (no cookies, CSRF-safe)
+- Owen-It Auditing: Industry-standard audit logging package (OwenIT/laravel-auditing)
+- Both packages actively maintained and security-patched
+
+**Incident Response & Breach Notification**
+
+- **Audit Trail**: All access logged; breach detection via audit review
+- **Future**: Automated alerts for unusual access patterns (multiple access in short time, off-hours access, etc.)
+- **Notification Process**: Future: implement user notification workflow for confirmed breaches per HIPAA/GDPR requirements
+
 **Implementation Notes (Actual Code Structure)**
 
 ```
@@ -355,9 +436,11 @@ app/Http/Controllers/Api/MeSummaryController.php            ← /api/me/summary
 app/Services/ReportingAggregationService.php                ← core aggregation logic
 app/Services/PersonalSummaryService.php                     ← summary wrapper
 app/Services/TrendCalculationService.php                    ← trend/bucketing logic
-app/Services/AuditLogger.php                                ← audit logging
+app/Services/AuditLogger.php                                ← audit logging + sensitive data guards
 database/migrations/2026_02_03_014733_create_health_entries_table.php
 database/migrations/2026_02_03_014636_create_form_submissions_table.php
+database/migrations/2026_02_01_031735_create_audits_table.php
+config/audit.php                                            ← audit configuration
 tests/Feature/Reporting/TrendEndpointTest.php
 tests/Feature/Reporting/ReportingAggregationServiceTest.php
 tests/Feature/Reporting/ReportAccessAuditLogTest.php
@@ -376,16 +459,17 @@ Reporting Services
     ├─ TrendCalculationService
     ├─ ReportingAggregationService
     ├─ PersonalSummaryService
-    └─ AuditLogger
+    └─ AuditLogger (with sensitive data guards)
     ↓
 Database Layer
-    ├─ health_entries (with encrypted_values JSONB)
-    └─ form_submissions (metadata)
+    ├─ health_entries (encrypted_values JSONB, AES-256-CBC)
+    ├─ form_submissions (metadata)
+    └─ audits (access logs, PHI-blocking)
     ↓
 Response (JSON + Audit Log Entry)
     ├─ {metric, bucket, from, to, points: []}
     ├─ {from, to, averages, counts}
-    └─ audit record: {event, tags, metadata}
+    └─ audit record: {event, tags, actor_id, metadata (no PHI)}
 ```
 
 **Future Considerations**
@@ -395,3 +479,6 @@ Response (JSON + Audit Log Entry)
 3. **Metric Allowlisting**: Current implementation allows any metric name; future: restrict to pre-defined list per account type
 4. **Data Warehousing**: If reporting queries become bottleneck, consider pre-aggregated tables populated by scheduled jobs
 5. **Real-time Dashboards**: Consider caching strategy if summary/trends endpoints become hot path
+6. **Advanced Breach Detection**: Implement anomaly detection for unusual reporting access patterns
+7. **Data Retention Automation**: Implement scheduled jobs for data lifecycle management (archival, deletion)
+8. **Penetration Testing**: Annual third-party security audit for HIPAA/GDPR compliance verification
