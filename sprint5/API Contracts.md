@@ -2,206 +2,167 @@
 
 **Base path**
 
-/api/reports
+/api
 
 **Auth + roles**
 
-- User dashboard endpoints: auth (logged-in user)
-- Cohort comparison: auth + cohort access allowed
-- Researcher/admin exports: role:researcher & admin
+- All reporting endpoints: auth (logged-in user via auth:sanctum)
+- User can only access their own data (filtered by account_id)
+- Admin-only endpoints: role:admin
 
-**1) List available report types (optional)**
+**1) Health Metrics Trends**
 
-GET /api/reports
+GET /api/reporting/trends
 
-**Response**
+**Query params (required)**
 
-{  
-"reports": \[  
-{  
-"id": "dashboard_summary",  
-"name": "Dashboard Summary",  
-"scope": "personal",  
-"supports_export": false  
-},  
-{  
-"id": "dashboard_trends",  
-"name": "Dashboard Trends",  
-"scope": "personal",  
-"supports_export": true  
-},  
-{  
-"id": "cohort_comparison",  
-"name": "Cohort Comparison",  
-"scope": "personal_vs_cohort",  
-"supports_export": true,  
-"privacy": { "k_threshold_default": 5 }  
-}  
-\]  
-}
-
-**2) Dashboard Summary (cards)**
-
-GET /api/reports/dashboard/summary
+- metric=<string> (e.g., 'hr', 'bp', 'weight') - required
+- from=YYYY-MM-DD - required
+- to=YYYY-MM-DD - required
 
 **Query params (optional)**
 
-- date_from=YYYY-MM-DD
-- date_to=YYYY-MM-DD
-- form_template_id=&lt;id&gt;
+- bucket=day|week|month (default: day)
 
 **Response**
 
 {  
-"generated_at": "2026-02-28T20:10:00Z",  
-"filters": {  
-"date_from": null,  
-"date_to": null,  
-"form_template_id": null  
+"metric": "hr",  
+"bucket": "day",  
+"from": "2026-02-01",  
+"to": "2026-02-02",  
+"points": [  
+{  
+"bucket_start": "2026-02-01T00:00:00Z",  
+"count": 2,  
+"min": 70.0,  
+"max": 90.0,  
+"avg": 80.0,  
+"latest": 90,  
+"latest_at": "2026-02-01T18:00:00Z"  
 },  
-"summary": {  
-"total_submissions": 14,  
-"last_submission_at": "2026-02-25T18:22:00Z",  
-"active_days": 9  
+{  
+"bucket_start": "2026-02-02T00:00:00Z",  
+"count": 1,  
+"min": 80.0,  
+"max": 80.0,  
+"avg": 80.0,  
+"latest": 80,  
+"latest_at": "2026-02-02T09:00:00Z"  
+}  
+]  
+}
+
+**Notes**
+
+- count reflects only numeric values (int, float, numeric-string)
+- latest is the most recent raw value (may be non-numeric)
+- Empty points array returned if no data in range
+
+**2) Personal Summary**
+
+GET /api/me/summary
+
+**Query params (required)**
+
+- from=YYYY-MM-DD
+- to=YYYY-MM-DD
+
+**Query params (optional)**
+
+- keys=<comma-separated-metrics> (e.g., 'hr,bp,weight')
+
+**Response**
+
+{  
+"from": "2026-02-01",  
+"to": "2026-02-28",  
+"averages": {  
+"hr": 75.5,  
+"bp": 125.0,  
+"weight": 170.2  
+},  
+"counts": {  
+"hr": 14,  
+"bp": 14,  
+"weight": 10  
 }  
 }
 
-**3) Dashboard Trends (graph series)**
+**Notes**
 
-GET /api/reports/dashboard/trends
+- averages include only numeric values
+- counts reflect numeric datapoints only
+- if keys parameter is provided, only those metrics are returned
+- user must have account_id linked to their user record
 
-**Query params**
+**3) Patients (Legacy)**
 
-- metric=submission_count (start with this; add more later)
-- group_by=day|week|month (default week)
-- date_from, date_to
-- form_template_id=&lt;id&gt; (optional)
+GET /api/patients
 
-**Response**
+POST /api/patients
 
-{  
-"generated_at": "2026-02-28T20:10:00Z",  
-"metric": "submission_count",  
-"group_by": "week",  
-"rows": \[  
-{ "period": "2026-W06", "value": 3 },  
-{ "period": "2026-W07", "value": 5 }  
-\]  
-}
-
-**4) Cohort Comparison (user vs cohort aggregates)**
-
-POST /api/reports/cohort/compare
-
-**Note:** Cohort comparison requires a cohort membership mapping (e.g., cohort_id on accounts/users or a cohort_members table). If not configured, the API will return either 501 Not Implemented or { cohort: { status: "not_configured" } }.
-
-**Request body**
-
-{  
-"metric": "submission_count",  
-"group_by": "month",  
-"date_from": "2026-01-01",  
-"date_to": "2026-02-28",  
-"form_template_id": null,  
-"k_threshold": 5  
-}
+GET /api/patients/{id}
 
 **Response**
 
-{  
-"generated_at": "2026-02-28T20:10:00Z",  
-"metric": "submission_count",  
-"group_by": "month",  
-"k_threshold": 10,  
-"cohort": {  
-"status": "ok",  
-"member_count": 32,  
-"suppressed": false  
-},  
-"rows": \[  
-{ "period": "2026-01", "user_value": 2, "cohort_avg": 1.6, "cohort_min": 0, "cohort_max": 6 },  
-{ "period": "2026-02", "user_value": 4, "cohort_avg": 2.1, "cohort_min": 0, "cohort_max": 7 }  
-\]  
-}
-
-**If cohort is too small**
-
-{  
-"generated_at": "2026-02-28T20:10:00Z",  
-"metric": "submission_count",  
-"group_by": "month",  
-"k_threshold": 10,  
-"cohort": {  
-"status": "suppressed",  
-"member_count": 3,  
-"suppressed": true  
-},  
-"rows": \[\]  
-}
-
-**5) CSV Export Endpoints**
-
-- **Content-Type: text/csv**
-- **Content-Disposition: attachment; filename="&lt;report-name&gt;\_&lt;date-range&gt;.csv"**
-
-**A) Export dashboard trends**
-
-GET /api/reports/dashboard/trends/export.csv?metric=submission_count&group_by=week&date_from=...
-
-Returns streamed CSV:
-
-**CSV columns**
-
-- period
-- value
-
-**B) Export cohort comparison**
-
-POST /api/reports/cohort/compare/export.csv
-
-Same body as compare, returns CSV:
-
-**CSV columns**
-
-- period
-- user_value
-- cohort_avg
-- cohort_min
-- cohort_max
-
-**Contract Notes**
+Standard REST resource endpoints for patient management.
 
 **Standard filter rules**
 
-- date_from, date_to are optional; default date_from = today - 90 days, date_to = today
-- group_by defaults to week
-- form_template_id optional
+- from, to dates are required for trend and summary endpoints
+- metric is required for trends endpoint
+- bucket defaults to day
+- keys optional for summary endpoint (if omitted, all metrics returned)
 
 **Allowed Parameter Values**
 
-- metric: submission_count (current supported value)
-- group_by: day, week, month (default: week)
-- k_threshold: integer ≥ 2 (default: 10; cohort endpoints only)
+- metric: any alphanumeric string with underscores, hyphens, dots (e.g., 'hr', 'blood_pressure', 'bmi')
+- bucket: day, week, month (default: day)
+- from/to: ISO date format (YYYY-MM-DD)
 
 **Security rules**
 
-- All endpoints require authentication.
-- Cohort compare uses aggregation only and suppresses small cohorts (k_threshold).
-- Responses never include raw health entry values or encrypted payload data.
+- All endpoints require Sanctum authentication
+- Users can only access their own aggregated data (filtered by account_id)
+- Responses never include raw encrypted_values or unencrypted health details
+- Non-authenticated requests return 401
+- Forbidden requests return 403
 
-**Audit rules (recommended)**
+**Audit rules**
 
-Log:
+All reporting endpoints automatically log:
 
-- report_run_requested / report_run_completed / report_run_failed
-- report_export_requested / report_export_completed / report_export_failed
+- reporting_trends_view – logged when /api/reporting/trends is called
+  - includes metric, bucket, from, to
+- reporting_summary_view – logged when /api/me/summary is called
+  - includes from, to, keys requested
+
+Audit log entries:
+
+- Include event type, tags, URL, IP address, user agent
+- Exclude sensitive data (passwords, emails, health values, encrypted payloads)
 
 **Error Responses (Global)**
 
 All endpoints may return:
 
-- 401 – Unauthenticated
-- 403 – Forbidden
-- 422 – Validation error
+- 401 – Unauthenticated (missing or invalid Sanctum token)
+- 403 – Forbidden (insufficient permissions)
+- 422 – Validation error (missing required params, invalid dates, invalid bucket value)
 - 500 – Internal server error
-- 501 – Cohort comparison not configured
+
+**Validation Rules**
+
+For /api/reporting/trends:
+
+- metric: required, string, max 64 chars, alphanumeric + underscore/hyphen/dot
+- from: required, valid date
+- to: required, valid date, must be >= from
+- bucket: optional, must be day|week|month
+
+For /api/me/summary:
+
+- from: required, valid date
+- to: required, valid date, must be after from
+- keys: optional, comma-separated metric names
