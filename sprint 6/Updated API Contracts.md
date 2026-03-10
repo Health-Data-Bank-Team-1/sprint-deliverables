@@ -25,7 +25,7 @@ GET /api/reporting/trends
 - bucket=day|week|month (default: day)
 
 **Response**
-
+```json
 {  
 "metric": "hr",  
 "bucket": "day",  
@@ -52,7 +52,7 @@ GET /api/reporting/trends
 }  
 ]  
 }
-
+```
 **Notes**
 
 - count reflects only numeric values (int, float, numeric-string)
@@ -73,7 +73,7 @@ GET /api/me/summary
 - keys=<comma-separated-metrics> (e.g., 'hr,bp,weight')
 
 **Response**
-``json
+```json
 {  
 "from": "2026-02-01",  
 "to": "2026-02-28",  
@@ -88,7 +88,7 @@ GET /api/me/summary
 "weight": 10  
 }  
 }
-
+```
 **Notes**
 
 - averages include only numeric values
@@ -116,7 +116,7 @@ POST /api/researcher/cohorts
   "start_date": "2026-03-01",
   "end_date": "2026-05-31"
 }
-
+```
 Supported filters
 - metric_key - string
 - status - string (e.g., ACTIVE, EXPIRED)
@@ -146,7 +146,8 @@ Response:
     }
   ]
 }
-Notes:
+```
+**Notes**:
 - Returns filtered cohort records for researcher analysis
 - Response excludes direct identifiers such as name and email
 - cohort_size must match the number of returned rows
@@ -178,6 +179,7 @@ Response:
     }
   }
 }
+```
 **Notes**
 - Returns summarized statistics instead of raw cohort rows
 - average_target_value is numeric and rounded
@@ -197,6 +199,7 @@ Response:
 Content-Type: text/csv
 
 Example CSV:
+```json
 metric,value
 cohort_size,2
 active_goals,1
@@ -204,7 +207,7 @@ expired_goals,1
 average_target_value,3
 metric_breakdown_exercise_frequency,1
 metric_breakdown_alcohol_consumption,1
-
+```
 Notes
 - Export reflects the same filtered aggregated dataset as the JSON aggregated report endpoint
 - CSV contains summary rows, not raw health records
