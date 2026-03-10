@@ -73,7 +73,7 @@ GET /api/me/summary
 - keys=<comma-separated-metrics> (e.g., 'hr,bp,weight')
 
 **Response**
-
+``json
 {  
 "from": "2026-02-01",  
 "to": "2026-02-28",  
@@ -106,7 +106,7 @@ POST /api/researcher/cohorts
 - Requires researcher role
 - Intended for researcher-only cohort generation
 
-**Request body (all optional filters)**
+**Request body**
 
 ```json
 {
@@ -116,6 +116,7 @@ POST /api/researcher/cohorts
   "start_date": "2026-03-01",
   "end_date": "2026-05-31"
 }
+
 Supported filters
 - metric_key - string
 - status - string (e.g., ACTIVE, EXPIRED)
