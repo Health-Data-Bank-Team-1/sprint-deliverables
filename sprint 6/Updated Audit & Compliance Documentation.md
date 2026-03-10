@@ -90,6 +90,9 @@ These are automatically added and should NOT be manually included in oldValues/n
 |-------|------|--------------|-----------------|
 | reporting_trends_view | ['reporting', 'resource:trends'] | GET /api/reporting/trends | metric, bucket, from, to |
 | reporting_summary_view | ['reporting', 'resource:summary'] | GET /api/me/summary | from, to, keys |
+| researcher_cohort_generated | ['reporting', 'researcher', 'outcome:success'] | POST /api/researcher/cohorts | filters, cohort_size |
+| researcher_aggregated_report_viewed | ['reporting', 'researcher', 'outcome:success'] | POST /api/researcher/reports/aggregated | filters, cohort_size |
+| researcher_aggregated_report_exported | ['reporting', 'researcher', 'outcome:success', 'format:csv'] | POST /api/researcher/reports/aggregated/export.csv | filters, cohort_size, format |
 
 **Form Workflow Events** (Future)
 
@@ -125,6 +128,7 @@ Counts (entry_count, submission_count)
 Status changes (approval_status: 'pending' → 'approved')
 Event codes (outcome: 'success', reason: 'invalid_credentials')
 Timestamps (submitted_at, created_at)
+Researcher reporting metadata (filters, cohort_size, export format)
 
 **Never Log:**
 
@@ -210,10 +214,13 @@ app/Listeners/LogLogout.php
 app/Listeners/LogRegistered.php
 app/Http/Controllers/Reporting/TrendController.php        ← Reporting audit logging
 app/Http/Controllers/Api/MeSummaryController.php
+app/Http/Controllers/Researcher/ResearcherCohortController.php
+app/Http/Controllers/Researcher/ResearcherReportController.php
 app/Exceptions/Handler.php                        ← Authorization failure logging
 config/audit.php                                  ← OwenIT/laravel-auditing configuration
 database/migrations/2026_02_01_031735_create_audits_table.php
 tests/Feature/Reporting/ReportAccessAuditLogTest.php
+
 ```
 
 **OwenIT/laravel-auditing Package**
