@@ -233,12 +233,70 @@ AuditLogger::log(
     ]
 );
 ```
-
 Location: `app/Http/Controllers/Api/MeSummaryController.php`
 
 Triggered: When user calls GET /api/me/summary
 
 Metadata Logged: Date range and requested metric keys, not summary values
+
+**Researcher Cohort Generation** (API Access)
+
+```php
+AuditLogger::log(
+    'researcher_cohort_generated',
+    ['reporting', 'researcher', 'outcome:success'],
+    null,
+    [],
+    [
+        'filters' => $filters,
+        'cohort_size' => $results->count(),
+    ]
+);
+```
+Location: app/Http/Controllers/Researcher/ResearcherCohortController.php
+
+Triggered: When researcher calls POST /api/researcher/cohorts
+
+Metadata Logged: Applied filters and cohort size only
+
+**Researcher Aggregated Report View** (API Access)
+```php
+AuditLogger::log(
+    'researcher_aggregated_report_viewed',
+    ['reporting', 'researcher', 'outcome:success'],
+    null,
+    [],
+    [
+        'filters' => $filters,
+        'cohort_size' => $report['cohort_size'],
+    ]
+);
+```
+Location: app/Http/Controllers/Researcher/ResearcherReportController.php
+
+Triggered: When researcher calls POST /api/researcher/reports/aggregated
+
+Metadata Logged: Applied filters and cohort size only
+
+**Researcher Aggregated Report Export** (API Access)
+```php
+AuditLogger::log(
+    'researcher_aggregated_report_exported',
+    ['reporting', 'researcher', 'outcome:success', 'format:csv'],
+    null,
+    [],
+    [
+        'filters' => $filters,
+        'cohort_size' => $report['cohort_size'],
+        'format' => 'csv',
+    ]
+);
+```
+Location: app/Http/Controllers/Researcher/ResearcherReportController.php
+
+Triggered: When researcher calls POST /api/researcher/reports/aggregated/export.csv
+
+Metadata Logged: Applied filters, cohort size, and export format only
 
 **Form Submission Events** (Future Implementation)
 
@@ -350,11 +408,18 @@ Log an audit entry when:
 - Form template submitted for approval
 - Admin approves/rejects template
 - User accesses reporting endpoints
+- Researcher generates a cohort
+- Researcher generates an aggregated report
+- Researcher exports an aggregated report to CSV
 
 **Reporting access occurs**
 - User calls /api/reporting/trends
 - User calls /api/me/summary
 - User exports data (future)
+- Researcher calls /api/researcher/cohorts
+- Researcher calls /api/researcher/reports/aggregated
+- Researcher calls /api/researcher/reports/aggregated/export.csv
+
 
 **Do NOT log:**
 - Every page load
