@@ -43,7 +43,7 @@ Cohort queries filter by a cohort membership rule (future implementation)
 
 - Stores encrypted payloads in health_entries.encrypted_values
 - Stores submission metadata in form_submissions
-- No reporting-specific tables required for Sprint 5 (on-the-fly aggregation)
+- No reporting-specific tables required (on-the-fly aggregation)
 - Optional future: pre-aggregated tables for Reports and AggregatedData
 
 **2) Domain/Service Layer (Reporting Logic)**
@@ -117,7 +117,7 @@ Frontend consumes:
 
 - **summary endpoint** → cards/tiles (latest BP, entries this week, average metrics, etc.)
 - **trends endpoint** → charts (line graphs of metrics over time bucketed by day/week/month)
-- Future: **export endpoint** → CSV download button (not yet implemented in Sprint 5)
+- Future: **export endpoint** → CSV download button
 
 **Cohort Comparison Reporting (Future)**
 
@@ -268,7 +268,7 @@ All reporting operations enforce:
 
 **Submission status filtering**
 
-Sprint 5 default: include all submission statuses (SUBMITTED, APPROVED, FLAGGED)
+Default: include all submission statuses (SUBMITTED, APPROVED, FLAGGED)
 
 Future enhancement: filter by status if approval workflow is required
 
@@ -281,9 +281,9 @@ All reporting access is logged:
 - Data values NEVER logged
 - Sensitive keys blocked by AuditLogger guardrail
 
-**Performance Approach (Sprint 5)**
+**Performance Approach**
 
-Sprint 5 uses on-the-fly aggregation:
+On-the-fly aggregation:
 
 - no background jobs required
 - no precomputed reporting tables (optional future optimization)
@@ -351,7 +351,7 @@ Sprint 5 uses on-the-fly aggregation:
 
 **Definition**
 
-Anonymization in the context of Sprint 5 reporting refers to the techniques used to prevent identification of individuals from aggregated health metrics. The system ensures that:
+Anonymization in the context of reporting refers to the techniques used to prevent identification of individuals from aggregated health metrics. The system ensures that:
 
 - Individual health values are never returned in reporting endpoints
 - Only aggregated statistics (count, min, max, avg) are exposed
@@ -412,9 +412,56 @@ When cohort comparison is implemented:
 
 **Data Retention & Lifecycle**
 
-- **Storage Duration**: Health entries retained for user's account lifetime
-- **Audit Logs**: Retained for minimum 1 year (configurable)
-- **Future**: Data retention policy enforced via scheduled jobs (e.g., delete entries >N years old after user request)
+**Health Entry Data**
+
+- **Storage Duration**: Health entries retained for user's account lifetime or until user requests deletion
+- **Inactive Account Data**: Raw health entry data for inactive/deactivated accounts retained for 1 year, after which they may be securely deleted unless subject to legal hold or active dispute
+- **Secure Deletion**: Deletion uses cryptographically secure methods ensuring data reconstruction is not reasonably foreseeable (compliant with PHIPA requirements)
+
+**Audit Logs (Governance Records)**
+
+- **Storage Duration**: Audit logs retained for **2 years** minimum
+- **Rationale**: Audit logs are governance and security records, not health data; longer retention than operational data supports:
+  - Security incident investigations
+  - Compliance audits and reviews
+  - Breach detection and response
+  - Dispute resolution
+- **Archival & Purge**: After 2-year retention period, audit logs may be securely archived or purged if no longer required for administrative, legal, or audit purposes
+- **Configurable**: Retention period adjustable per deployment via environment configuration
+- **Secure Disposal**: All deletions/archival use cryptographically secure methods per PHIPA/HIPAA standards
+
+**Reporting Access Audit Logs**
+
+- **Event Types Logged**:
+  - `reporting_trends_view`: User accessed /api/reporting/trends endpoint
+  - `reporting_summary_view`: User accessed /api/me/summary endpoint
+- **Data Logged**: Event type, actor_id (account UUID), timestamp, IP address, user agent, request parameters (metric, bucket, from, to, keys)
+- **Data NOT Logged**: Aggregated metric values, decrypted health data, raw encrypted_values
+- **Retention**: Subject to 2-year audit log retention policy
+- **Queryable For**: Security reviews, audit trails, breach investigation, access pattern analysis
+
+**Deletion and Disposal Rules**
+
+**Triggering Events for Health Entry Deletion**
+
+- User explicitly requests account deletion
+- User requests deletion of specific health entries
+- Account deactivated for 1+ year (inactive data deletion policy)
+- Legal/regulatory requirement
+
+**Triggering Events for Audit Log Deletion**
+
+- 2-year retention period elapsed
+- Legal hold or investigation complete
+- Regulatory requirement
+- Data breach remediation (remove compromised records)
+
+**Secure Deletion Methods**
+
+- Use database-level cascading deletes for related records
+- Verify deletion with database queries to confirm no orphaned records
+- Do not rely on soft deletes for sensitive audit/health data
+- Future: Implement cryptographic deletion for at-rest encrypted data
 
 **Third-Party Compliance**
 
