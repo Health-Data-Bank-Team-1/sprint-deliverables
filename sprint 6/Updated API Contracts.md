@@ -96,7 +96,119 @@ GET /api/me/summary
 - if keys parameter is provided, only those metrics are returned
 - user must have account_id linked to their user record
 
-**3) Patients (Legacy)**
+**3) Researcher Cohort**
+
+POST /api/researcher/cohorts
+
+**Auth + roles**
+
+- Requires `auth:sanctum`
+- Requires researcher role
+- Intended for researcher-only cohort generation
+
+**Request body (all optional filters)**
+
+```json
+{
+  "metric_key": "exercise_frequency",
+  "status": "ACTIVE",
+  "timeframe": "week",
+  "start_date": "2026-03-01",
+  "end_date": "2026-05-31"
+}
+Supported filters
+- metric_key - string
+- status - string (e.g., ACTIVE, EXPIRED)
+- timeframe - string (e.g., day, week, month)
+- start_date - ISO date (YYYY-MM-DD)
+- end_date - ISO date (YYYY-MM-DD)
+
+Response:
+```json
+{
+  "message": "Cohort generated successfully",
+  "cohort_size": 2,
+  "filters_applied": {
+    "status": "ACTIVE"
+  },
+  "data": [
+    {
+      "id": "uuid",
+      "account_id": "uuid",
+      "metric_key": "alcohol_consumption",
+      "comparison_operator": "<=",
+      "target_value": 2,
+      "timeframe": "month",
+      "start_date": "2026-03-09",
+      "end_date": "2026-04-24",
+      "status": "ACTIVE"
+    }
+  ]
+}
+Notes:
+- Returns filtered cohort records for researcher analysis
+- Response excludes direct identifiers such as name and email
+- cohort_size must match the number of returned rows
+
+**4) Researcher Aggregated Report**
+POST /api/researcher/reports/aggregated
+
+**Auth + roles**
+- Requires auth:sanctum
+- Requires researcher role
+
+**Request body**
+Same filters as /api/researcher/cohorts
+
+Response:
+```json
+{
+  "message": "Aggregated report generated successfully",
+  "filters_applied": {
+    "status": "ACTIVE"
+  },
+  "report": {
+    "cohort_size": 1,
+    "active_goals": 1,
+    "expired_goals": 0,
+    "average_target_value": 2,
+    "metric_breakdown": {
+      "alcohol_consumption": 1
+    }
+  }
+}
+**Notes**
+- Returns summarized statistics instead of raw cohort rows
+- average_target_value is numeric and rounded
+- metric_breakdown maps metric_key to count
+
+**5) Researcher Aggregated Report CSV Export**
+POST /api/researcher/reports/aggregated/export.csv
+
+**Auth + roles**
+- Requires auth:sanctum
+- Requires researcher role
+
+**Request body**
+Same filters as /api/researcher/reports/aggregated
+
+Response:
+Content-Type: text/csv
+
+Example CSV:
+metric,value
+cohort_size,2
+active_goals,1
+expired_goals,1
+average_target_value,3
+metric_breakdown_exercise_frequency,1
+metric_breakdown_alcohol_consumption,1
+
+Notes
+- Export reflects the same filtered aggregated dataset as the JSON aggregated report endpoint
+- CSV contains summary rows, not raw health records
+
+**6) Patients (Legacy)**
 
 GET /api/patients
 
@@ -128,6 +240,9 @@ Standard REST resource endpoints for patient management.
 - Responses never include raw encrypted_values or unencrypted health details
 - Non-authenticated requests return 401
 - Forbidden requests return 403
+- Researcher reporting endpoints require researcher role in addition to Sanctum authentication
+- Researcher cohort endpoint returns only safe reporting fields
+- Researcher aggregated export returns summary CSV only
 
 **Audit rules**
 
@@ -137,6 +252,11 @@ All reporting endpoints automatically log:
   - includes metric, bucket, from, to
 - reporting_summary_view – logged when /api/me/summary is called
   - includes from, to, keys requested
+- reporting_trends_view
+- reporting_summary_view
+- researcher_cohort_generated
+- researcher_aggregated_report_viewed
+- researcher_aggregated_report_exported
 
 Audit log entries:
 
