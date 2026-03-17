@@ -1,6 +1,4 @@
-I found a backup.sql file in the health-data-bank repo. Let me get more details and search for relevant documentation about data retention and security:Based on my analysis of the project, here's a comprehensive **Controlled Database Restore Procedure for Admin/Governance**:
 
-```markdown
 # Controlled Database Restore Procedure for Admin/Governance
 
 ## Purpose
