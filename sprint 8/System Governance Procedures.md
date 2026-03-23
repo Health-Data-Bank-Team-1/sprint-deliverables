@@ -1312,7 +1312,7 @@ Timestamp: [automated]
 
 ## DISASTER RECOVERY & BACKUPS
 
-### Backup Strategy
+### Backup Strategy (Recommended Setup)
 
 **3-2-1 Backup Rule:**
 - **3** copies of data
@@ -1323,9 +1323,9 @@ Timestamp: [automated]
 
 | Copy | Location | Frequency | Retention |
 |------|----------|-----------|-----------|
-| 1 | Local server | Daily | 30 days |
-| 2 | S3 (offsite) | Daily | 90 days |
-| 3 | Tape archive | Weekly | 7 years |
+| 1 | Local server | Daily | 30 days | (IMPLEMENTED)
+| 2 | S3 (offsite) | Daily | 90 days | (NOT IMPLEMENTED)
+| 3 | Tape archive | Weekly | 7 years | (NOT IMPLEMENTED)
 
 ### Disaster Recovery Plan
 
