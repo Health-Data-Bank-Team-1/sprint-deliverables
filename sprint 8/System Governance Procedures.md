@@ -1944,19 +1944,6 @@ Date: [Date]
 | Database Management | `/admin/database` | Admin |
 | Profile Settings | `/admin/profile` | Admin |
 
-### Emergency Contacts
-
-```
-On-Call Admin: [Phone] [Email]
-IT Director: [Phone] [Email]
-Security Officer: [Phone] [Email]
-Compliance Officer: [Phone] [Email]
-CEO: [Phone] [Email]
-
-Available 24/7 for critical incidents
-Response time: <15 minutes for P1 issues
-```
-
 ### Critical Commands
 
 ```bash
