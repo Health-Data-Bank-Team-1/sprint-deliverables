@@ -863,91 +863,101 @@ Admin Can Review
     ├─ Generate compliance reports
     └─ Export audit trail
 ```
+
 ### 7.8 Notification and Reminder Workflow
 
+```
+
 System Runs Scheduled Reminder Check
-↓
+    ↓
 Load Active Reminder Rules
-↓
+    ↓
 Evaluate Reminder Conditions
-├─ Check inactivity conditions
-├─ Check missing data submissions
-├─ Check scheduled reminder timing
-↓
+    ├─ Check inactivity conditions
+    ├─ Check missing data submissions
+    └─ Check scheduled reminder timing
+    ↓
 Identify Users Meeting Reminder Conditions
-↓
+    ↓
 Apply RBAC / Privacy Validation
-├─ Ensure user is authorized
-├─ Ensure data belongs to user
-↓
+    ├─ Ensure user is authorized
+    └─ Ensure data belongs to user
+    ↓
 Generate Reminder Event
-↓
+    ↓
 Create Notification Record
-├─ Assign user_id
-├─ Assign notification type (reminder / alert)
-├─ Set status = unread
-├─ Attach message content
-↓
+    ├─ Assign user_id
+    ├─ Assign notification type (reminder / alert)
+    ├─ Set status = unread
+    └─ Attach message content
+    ↓
 Store Notification in Database
-↓
+    ↓
 Check Notification Preferences
-├─ In-app notification (dashboard)
-├─ Email (if enabled)
-↓
+    ├─ In-app notification (dashboard)
+    └─ Email (if enabled)
+    ↓
 Deliver Notification
-↓
+    ↓
 Log Notification Event (Audit Log)
-↓
+    ↓
 User Opens Notification
-↓
+    ↓
 Mark Notification as Read
-↓
+    ↓
 End Workflow
 
+```
 ### 7.9 Suggestion System Workflow
 
+```
+
 System Trigger
-├─ Periodic analysis
-├─ New data submission
-↓
+    ├─ Periodic analysis
+    └─ New data submission
+    ↓
 Load User Data and Reporting Metrics
-↓
+    ↓
 Check Preconditions
-├─ Sufficient historical data available?
-├─ Suggestion feature enabled?
-↓
+    ├─ Sufficient historical data available?
+    └─ Suggestion feature enabled?
+    ↓
 Apply RBAC / Privacy Validation
-├─ Ensure user access allowed
-↓
+    └─ Ensure user access allowed
+    ↓
 Analyze Data
-├─ Evaluate trends
-├─ Evaluate aggregated metrics
-↓
+    ├─ Evaluate trends
+    └─ Evaluate aggregated metrics
+    ↓
 Evaluate Suggestion Rules
-├─ Threshold conditions
-├─ Trend-based conditions
-├─ Missing data conditions
-↓
+    ├─ Threshold conditions
+    ├─ Trend-based conditions
+    └─Missing data conditions
+    ↓
 Condition Met?
-├─ No → End Workflow
-├─ Yes → Continue
-↓
+    ├─ No → End Workflow
+    └─ Yes → Continue
+    ↓
 Generate Suggestion
-├─ Assign suggestion type
-├─ Create suggestion message
-├─ Attach user reference
-↓
+    ├─ Assign suggestion type
+    ├─ Create suggestion message
+    └─ Attach user reference
+    ↓
 Store Suggestion Record
-↓
+    ↓
 Display Suggestion on Dashboard
-↓
+    ↓
 Optional: Send Notification for High Priority Suggestion
-↓
+    ↓
 Log Suggestion Event (Audit Log)
-↓
+    ↓
 End Workflow
 
+```
+
 ### 7.10 Stretch Feature Integration
+
+```
 
 Reminder System
 ↓
@@ -970,8 +980,9 @@ Displayed on Dashboard
 All Components Enforce:
 ├─ RBAC (Role-Based Access Control)
 ├─ Privacy Constraints
-├─ Audit Logging
+└─  Audit Logging
 
+```
 ---
 
 ## 8. Security Architecture
