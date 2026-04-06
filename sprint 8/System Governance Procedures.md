@@ -1307,8 +1307,60 @@ Old Values: [before]
 New Values: [after]
 Timestamp: [automated]
 ```
+## NOTIFICATIONS & SUGGESTIONS SECURITY
 
----
+### Notification Access Control
+
+**Access Rules:**
+- Notifications are linked to individual user accounts
+- Users can only view their own notifications
+- Access to other users’ notifications is restricted
+- All access is enforced through authentication and authorization middleware
+
+**Authorized Actions:**
+- View notification details
+- Mark notifications as read
+- Access related pages through notification links
+
+**Restrictions:**
+- Unauthorized access attempts are blocked
+- Cross-user data access is not permitted
+- All actions require authenticated sessions
+
+
+
+### Privacy and Compliance
+
+**Data Protection:**
+- Notifications do not expose sensitive health data unnecessarily
+- Only relevant and minimal information is included in notifications
+- Sensitive values are not directly displayed in notification content
+
+**Suggestion Data Handling:**
+- Suggestions are generated using aggregated and analyzed data
+- Individual sensitive data is not exposed in raw form
+- Suggestions are only created when sufficient data is available
+
+**Compliance Measures:**
+- All notification and suggestion interactions are logged
+- Audit logs capture access, actions, and system events
+- Role-based access control (RBAC) is enforced across all features
+- System follows established privacy and security policies
+
+
+
+### Audit and Monitoring
+
+**Audit Logging:**
+- All notification creation events are logged
+- User interactions (view, read, action) are recorded
+- Suggestion generation events are tracked
+
+**Monitoring:**
+- Unauthorized access attempts are logged and monitored
+- System activity related to notifications and suggestions is auditable
+- Logs can be reviewed for compliance and debugging purposes
+
 
 ## DISASTER RECOVERY & BACKUPS
 
