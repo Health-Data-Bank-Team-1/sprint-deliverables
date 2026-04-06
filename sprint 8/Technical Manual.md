@@ -344,6 +344,50 @@ class PatientService
 - `AggregatedMetricsService` - Aggregate research metrics
 - `PersonalComparisonService` - Compare user metrics to cohorts
 
+**Service Responsibilities:**
+
+- `ReportingAggregationService`  
+  - Aggregates reporting data for dashboards and summary views  
+  - Supports report-oriented metric collection across accounts  
+
+- `PersonalSummaryService`  
+  - Produces user-specific summary data for personal health review  
+  - Supports personal dashboard and summary endpoints  
+
+- `TrendCalculationService`  
+  - Calculates trend information over a selected time range  
+  - Supports graphing and time-based reporting outputs  
+
+- `AggregatedMetricsService`  
+  - Computes aggregated metrics for grouped or cohort-based data access  
+  - Supports researcher reporting workflows and aggregate analysis  
+
+- `PersonalComparisonService`  
+  - Compares a user’s personal data against broader aggregate values  
+  - Supports user-facing comparison features while preserving privacy constraints  
+
+- `AuditLogger`  
+  - Centralizes audit logging across the system  
+  - Records significant actions such as data access, report generation, approvals, and updates  
+  - Supports accountability, traceability, and compliance requirements  
+
+- `CohortFilterBuilder`  
+  - Builds researcher cohort queries from selected filter criteria  
+  - Supports cohort creation and filtered reporting workflows  
+
+- `KThresholdService`  
+  - Enforces minimum cohort-size requirements before aggregated data is returned  
+  - Prevents reporting output that would violate privacy constraints  
+
+
+**Reporting Services:**  
+The reporting subsystem is implemented through coordinated service-layer components. These services retrieve data, calculate summaries and trends, apply aggregation rules, and return report-ready results for dashboards, personal summaries, and researcher analytics.  
+
+**Audit Services:**  
+Audit logging is handled centrally through `AuditLogger`, allowing multiple system workflows to record actions in a consistent format. This includes access events, approval events, report events, and other security-relevant operations.  
+
+**RBAC Enforcement:**  
+Role-based access control is enforced through Laravel middleware and the Spatie Permission package. At the service and controller levels, this ensures that users only access functionality and data appropriate to their role, such as User, Provider, Researcher, or Admin.  
 #### 3.2.4 Repository Layer
 
 **Location**: `app/Repositories/`
@@ -413,45 +457,66 @@ class PatientRepository
 ### 4.1 API Endpoints by Role
 
 #### User/Patient Endpoints
-```
-GET    /api/patients                    - List user's patients
-POST   /api/patients                    - Create new patient
-GET    /api/patients/{id}               - Get patient details
-PUT    /api/patients/{id}               - Update patient
-DELETE /api/patients/{id}               - Delete patient
-GET    /api/goals                       - List health goals
-POST   /api/goals                       - Create health goal
-GET    /me/summary                      - Get personal health summary
-GET    /api/reporting/trends            - Get health trends
-GET    /api/personal-comparison         - Compare personal metrics
-```
+
+GET    /api/patients                         - List patient records available to the authenticated user  
+POST   /api/patients                         - Create a new patient record  
+GET    /api/patients/{id}                    - Retrieve a specific patient record  
+PUT    /api/patients/{id}                    - Update a specific patient record  
+DELETE /api/patients/{id}                    - Delete a specific patient record  
+
+GET    /api/goals                            - List health goals  
+POST   /api/goals                            - Create a health goal  
+GET    /api/goals/{goalId}                   - Retrieve a specific health goal  
+
+GET    /api/me/summary                       - Retrieve personal health summary data  
+GET    /api/reporting/trends                 - Retrieve personal trend data  
+GET    /api/personal-comparison              - Retrieve comparison data against aggregate values  
+
+GET    /api/reports/dashboard/trends         - Retrieve dashboard trend data  
+GET    /api/reports/dashboard/trends/export.csv - Export dashboard trend data as CSV  
+
 
 #### Provider Endpoints
-```
-GET    /api/provider/dashboard          - Provider metrics & statistics
-GET    /api/provider/patients/search    - Search patients
-GET    /api/provider/patients/{id}      - View patient record
-PUT    /api/provider/patients/{id}      - Update patient notes
-GET    /api/provider/reports            - List patient reports
-```
+
+GET    /api/provider/dashboard               - Retrieve provider dashboard metrics  
+GET    /api/provider/patients/search         - Search for patient accounts  
+GET    /api/provider/patients/{patient}      - Retrieve a specific patient record  
+PUT    /api/provider/patients/{patient}      - Update provider-managed patient information  
+
 
 #### Researcher Endpoints
-```
-POST   /api/researcher/cohorts          - Create research cohort
-GET    /api/researcher/cohorts          - List researcher's cohorts
-GET    /api/research/reporting/aggregate - Get aggregated research data
-POST   /api/researcher/reports/aggregated - Generate aggregated report
-```
+
+POST   /api/researcher/cohorts               - Create a researcher-defined cohort  
+GET    /api/researcher/cohorts               - List researcher cohorts  
+GET    /api/research/reporting/aggregate     - Retrieve aggregated research reporting data  
+POST   /api/researcher/reports/aggregated    - Generate an aggregated report  
+POST   /api/researcher/reports/aggregated/export.csv - Export aggregated report data as CSV  
+
 
 #### Admin Endpoints
+
+GET    /api/admin/dashboard                  - Retrieve administrative dashboard metrics  
+GET    /api/admin/audit-log                  - View audit log entries  
+
+GET    /api/admin/forms                      - List form templates for administrative review  
+POST   /api/admin/forms/{template}/approve   - Approve a form template  
+POST   /api/admin/forms/{template}/reject    - Reject a form template  
+POST   /api/admin/forms/{template}/submit    - Submit a form template into the approval workflow  
+
+GET    /api/form-templates/{template}/versions            - View form version history  
+POST   /api/form-templates/{template}/rollback/{version}  - Roll back to a previous form version  
+
+
+**Endpoint Characteristics:**
+
+- Endpoints are grouped by user role and protected by middleware  
+- API access is authenticated using Laravel Sanctum  
+- Role restrictions are applied using role-based middleware  
+- Research endpoints return aggregated or filtered data rather than direct access to sensitive individual data  
+- Administrative endpoints are restricted to users with elevated permissions  
 ```
-GET    /admin/dashboard                 - Admin metrics
-GET    /admin/users                     - List all users
-POST   /admin/users                     - Create user
-GET    /admin/forms                     - List pending forms
-POST   /admin/forms/{id}/approve        - Approve form template
-GET    /admin/audit-log                 - View audit logs
-```
+
+
 
 ### 4.2 API Authentication
 
