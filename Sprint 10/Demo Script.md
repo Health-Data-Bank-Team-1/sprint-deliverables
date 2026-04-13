@@ -12,8 +12,15 @@ Demo Scenario:
 Demo data props:
 
 - Accounts to log in with: user_demo, provider_demo, researcher_demo, admin_demo
-- One approved form already exists (e.g., “Weekly Vitals & Symptoms”)
-- (Optional) One pending form template exists for admin approval (to show workflow)
+    - user@demo.com, Password
+    - provider@demo.com, Password
+    - researcher@demo.com, Password
+    - admin@demo.com, Password
+  
+- One approved form already exists
+  -  Demo form: Weekly Vitals & Symptoms
+
+- One pending form template exists for admin approval (to show workflow)
 - User has either no entries yet or just a few (so your new entry is visible)
 - Research cohort size should be >= 10 to avoid the “cohort too small” suppression (k-threshold)
 
