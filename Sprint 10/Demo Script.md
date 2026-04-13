@@ -14,7 +14,7 @@ admin governs forms and auditing.
 
 Demo data props:
 
-- Accounts to log in with: user_demo, provider_demo, researcher_demo, admin_demo
+- Accounts to log in with:
     - user@demo.com, Password
     - provider@demo.com, Password
     - researcher@demo.com, Password
