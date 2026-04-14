@@ -214,30 +214,6 @@ As a User (Patient), you own your health data and control who accesses it. You c
 5. Verify your email by clicking the link sent to your inbox
 6. Complete 2FA setup (see "Security Setup" below)
 7. Accept Terms of Service and Privacy Policy
-8. Complete your profile with optional information:
-   - Date of birth
-   - Gender
-   - Contact phone number
-   - Emergency contact
-
-#### Setting Up Your Profile
-
-After registration, complete your profile:
-
-1. Click your name (top right) → "Profile"
-2. Update personal information:
-   - Photo/Avatar
-   - Contact information
-   - Emergency contact
-   - Healthcare provider (if known)
-3. Set privacy preferences:
-   - Who can see your profile
-   - Data sharing defaults
-4. Review and update:
-   - Address
-   - Insurance information (optional)
-   - Medical history (optional)
-5. Click "Save Profile"
 
 #### Security Setup (2FA)
 
@@ -264,62 +240,33 @@ During first login:
 | Health Summary | Key metrics overview | Quick snapshot of health status |
 | Recent Entries | Latest health data | Track recent submissions |
 | Health Goals | Your goals & progress | Monitor goal achievements |
-| Tasks/To-Do | Pending actions | Forms to fill, data to update |
-| Quick Actions | Common tasks | Submit form, add entry, view summary |
 
 **Navigation Menu**:
 - Home/Dashboard - Main overview
-- My Data - View all health entries
 - Forms - Complete questionnaires
-- Health Summary - View compiled summary
-- Progress - Track improvements over time
-- Goals - Manage health goals
+- My Progress - Track improvements over time
+- Notifications - View your notifications
 - Profile - Edit account settings
 - Logout - End your session
 
 ### 3.4 Core Features Available
 
-#### 3.4.1 Health Summary
-
-Your personal health overview showing:
-- Current health metrics
-- Key vital signs trends
-- Health score or wellness rating
-- Recent health entries
-- Upcoming appointments or reminders
-- Active health goals
-
-**How to access**:
-1. Click "Health Summary" in navigation menu
-2. View your comprehensive health overview
-3. Click on any metric for more details
-4. Use date filters to view historical data
-
-#### 3.4.2 Form Management
+#### 3.4.1 Form Management
 
 **Browsing Available Forms**:
 1. Click "Forms" in navigation menu
 2. View all available health forms
-3. Read form descriptions and purposes
-4. Click "Start" or "Complete" to begin
+3. Click on a form to open it
 
 **Completing Health Forms**:
 1. Click form title to open
-2. Read instructions and questions
+2. Read form description and questions
 3. Enter your responses (text, numbers, dropdowns)
 4. Real-time validation shows if entries are correct
-5. Click "Save & Continue" to move between sections
-6. Click "Submit" when complete
-7. See confirmation message with timestamp
+5. Click "Submit" when complete
+6. See confirmation message indicating form submitted successfully
 
-**Viewing Filled Forms**:
-1. Click "My Responses" or "Completed Forms"
-2. View list of submitted forms
-3. Click any form to view your responses
-4. Edit recent responses if allowed
-5. View submission dates and times
-
-#### 3.4.3 Progress Tracking
+#### 3.4.2 Progress Tracking
 
 Track your health improvements over time:
 
@@ -330,20 +277,7 @@ Track your health improvements over time:
 5. See progress toward your health goals
 6. Export progress report as PDF
 
-#### 3.4.4 Task Management
-
-Your pending tasks and action items:
-
-1. Click "My Tasks" or "To-Do" in menu
-2. View tasks assigned to you:
-   - Forms to complete
-   - Data to update
-   - Upcoming appointments
-3. Check box to mark task complete
-4. Click task for more details
-5. Set reminders for time-sensitive tasks
-
-#### 3.4.5 User Profile
+#### 3.4.4 User Profile
 
 Manage your account and personal information:
 
@@ -370,14 +304,12 @@ Manage your account and personal information:
 
 - Your own health entries and data
 - Your health goals and progress
-- Your submitted forms and responses
 - Your personal health summary
 - Providers you've shared data with
 
 #### What data can Users modify?
 
 - Your own profile information
-- Your health entries (recent ones)
 - Your health goals
 - Your form responses (before submission)
 - Your privacy and sharing settings
@@ -398,37 +330,25 @@ Your data is:
 - Click "Forms" in the main menu
 - Browse available forms
 - Select form you want to complete
-- Click "Start Form"
+- Click on the form title
 
 **Step 2: Fill Out the Form**
 - Read each question carefully
 - Enter responses in provided fields
-- Use dropdowns for multiple choice
+- Select check boxes for multiple choice
 - Enter numbers for measurements
 - Real-time validation shows errors in red
 
-**Step 3: Save Your Progress**
-- Click "Save & Continue" between sections
-- Your progress is auto-saved
-- You can return later to finish
-- All entries are timestamped
-
-**Step 4: Submit the Form**
+**Step 3: Submit the Form**
 - Review your responses on final screen
 - Click "Submit Form"
 - Confirm submission when prompted
 - You'll see success confirmation
 
-**Step 5: Track Your Response**
-- View submitted form in "My Forms"
-- Check timestamps and responses
-- See form used for health summary
-- Share with provider if allowed
-
 #### Tracking Your Health Progress
 
 **Step 1: Access Progress Tool**
-- Click "Progress" in menu
+- Click "My Progress" in menu
 - Or click "View Progress" from dashboard
 
 **Step 2: View Your Charts**
@@ -440,14 +360,7 @@ Your data is:
 **Step 3: Analyze Your Data**
 - Hover over chart points for details
 - Note improvements or changes
-- See goals and targets
 - Export data if needed
-
-**Step 4: Share Progress**
-- Click "Share Progress" button
-- Select provider to share with
-- Choose date range and metrics
-- Provider receives notification
 
 #### Managing Your Profile
 
@@ -483,8 +396,7 @@ The system provides notifications to support timely interaction and data submiss
 - Updates related to user actions or system events
 
 **Accessing Notifications:**
-- Click "Dashboard" in the main menu
-- Locate the Notifications section or icon
+- Click "Notifications" in the navigation bar
 - Click a notification to view details
 
 **Managing Notifications:**
@@ -524,7 +436,6 @@ As an HCP (Healthcare Provider), you can:
 - Add clinical notes and observations
 - Generate patient-specific reports
 - Track multiple patient care needs
-- Collaborate with care team
 
 ### 4.2 Getting Started
 
@@ -560,12 +471,7 @@ Complete your provider profile:
    - Department
    - Contact information
    - Office address
-4. Configure preferences:
-   - Notification settings
-   - Default patient list view
-   - Report preferences
-   - Scheduling preferences
-5. Save profile
+4. Save profile
 
 #### Security Configuration
 
@@ -602,16 +508,9 @@ Secure your HCP account:
 | Widget | Shows |
 |--------|-------|
 | **Patient List** | Your assigned patients |
-| **Recent Activity** | Latest patient entries |
-| **Alerts** | Urgent patient issues |
-| **Tasks** | Pending actions |
-| **Reports** | Recent patient reports |
 
 **Key Metrics Displayed**:
-- Total active patients
-- Patients with recent entries
-- Pending tasks/reviews
-- Outstanding reports
+- Patients and their health reports
 
 ### 4.4 Core Features Available
 
@@ -620,51 +519,21 @@ Secure your HCP account:
 **Viewing Patient List**:
 1. Click "Patients" in menu
 2. View list of assigned patients
-3. Sort by name, last visit, status
-4. Search for specific patient
-5. Filter by department/specialty
-6. View patient thumbnails with key info
+3. Search for specific patient
 
 **Accessing Patient Records**:
 1. Click patient name in list
 2. Patient record opens
-3. View tabs:
-   - Summary - Key health info
-   - Health Entries - All submitted data
-   - Goals - Patient's health goals
-   - Notes - Your clinical notes
-   - Reports - Generated reports
-   - History - Change history
-
-**Patient Health Entry Management**:
-1. Click "Health Entries" tab
-2. View all patient submissions
-3. Sort by date (newest first)
-4. Click any entry to view details
-5. See encrypted data decrypted
-6. View timestamp and form used
-7. Add clinical interpretation
+3. Select date range
+4. View patient health data over the date range
 
 #### 4.4.2 Patient Health Records
 
 **Reviewing Patient Health Data**:
 1. Open patient record
-2. Click "Summary" tab
-3. View key metrics at a glance
-4. Review health score/status
-5. Check active health goals
-6. View recent vital signs
-7. Identify trends or concerns
-
-**Updating Patient Information**:
-1. Click "Edit" on patient summary
-2. Update relevant medical information:
-   - Allergies
-   - Current medications
-   - Medical history
-   - Diagnoses
-3. Note clinical observations
-4. Click "Save"
+2. Patient record opens
+3. Select date range
+4. View patient health data over the date range
 
 **Adding Clinical Notes**:
 1. Click "Notes" tab
@@ -696,17 +565,6 @@ Secure your HCP account:
 6. Click "Generate"
 7. Preview report
 8. Click "Download as PDF" or "Print"
-
-**Exporting Patient Data**:
-1. Open patient record
-2. Click "Export" button
-3. Select format:
-   - PDF (formatted)
-   - CSV (spreadsheet)
-   - HL7 (interoperable format)
-4. Select data types to include
-5. Click "Export"
-6. Download or email file
 
 #### 4.4.4 Provider Profile
 
@@ -890,43 +748,12 @@ Before accessing data:
 
 | Widget | Shows |
 |--------|-------|
-| **Active Projects** | Your research studies |
-| **Data Requests** | Pending data access requests |
-| **Cohorts** | Research cohorts you've created |
-| **Recent Reports** | Generated research reports |
-| **Compliance Status** | IRB and agreement status |
-
-**Key Features**:
-- Quick links to create new cohorts
-- Data export options
-- Report generation tools
-- Compliance calendar
+| **Forms** | Your research studies |
+| **Reports** | Pending data access requests |
 
 ### 5.4 Core Features Available
 
 #### 5.4.1 Data Access and Reporting
-
-**Requesting Data Access**:
-1. Click "Request Data Access"
-2. Provide research details:
-   - Study name/title
-   - Research objectives
-   - Data types needed
-   - Cohort criteria
-3. Attach IRB approval letter
-4. Reference data use agreement
-5. Submit request
-6. Admin reviews and approves
-7. You receive approval notification
-8. Access granted to requested data
-
-**Viewing Authorized Data**:
-1. Click "My Data Access"
-2. View approved data requests
-3. See data available for analysis
-4. View data types and volume
-5. Note expiration dates
-6. Download data in requested format
 
 **Understanding Data Restrictions**:
 - No patient identifiers (names, dates of birth)
@@ -945,76 +772,13 @@ Before accessing data:
 - Cannot be linked back to individuals
 - Compliant with HIPAA Safe Harbor
 
-#### 5.4.2 Research Projects
-
-**Creating Research Proposals**:
-1. Click "New Research Project"
-2. Enter project details:
-   - Project title
-   - Research objectives
-   - Methodology
-   - Study duration
-   - Expected cohort size
-3. Define cohort criteria:
-   - Age ranges
-   - Health conditions
-   - Geographic location
-   - Time periods
-4. Specify data needs:
-   - Vital signs
-   - Form responses
-   - Health goals
-   - Other metrics
-5. Submit proposal
-6. Track review status
-
-**Managing Active Studies**:
-1. Click "My Projects"
-2. View all active research studies
-3. Click project to view details
-4. Track project status
-5. Update project information
-6. View compliance status
-7. Access project data
-8. Generate project reports
-
-**Tracking Research Progress**:
-1. Open project
-2. View progress dashboard
-3. Monitor:
-   - Data collection status
-   - Cohort size progress
-   - Analysis completion
-   - Report generation
-4. Update project milestones
-5. Note any issues or delays
-6. Document findings
-
-#### 5.4.3 Data Export and Analysis
+#### 5.4.2 Data Export and Analysis
 
 **Exporting Research Data**:
-1. Click "Export Data"
-2. Select project/cohort
-3. Choose data types:
-   - Demographics (age range, gender)
-   - Vital signs
-   - Health metrics
-   - Form responses
-4. Select time period
-5. Choose file format:
-   - CSV (spreadsheet)
-   - Excel (.xlsx)
-   - JSON (structured)
-6. Click "Generate Export"
-7. Download file
-8. Activity logged for audit trail
-
-**Data Format Options**:
-- **CSV** - Compatible with most analysis software
-- **Excel** - Pre-formatted tables
-- **JSON** - Structured data format
-- **R format** - For statistical analysis
-- **Python format** - For data science
+1. Select report/cohort
+2. Click "Export as CSV"
+3. Download file
+4. Activity logged for audit trail
 
 **Compliance with Data Usage Agreements**:
 - Use data only for approved research
@@ -1025,25 +789,15 @@ Before accessing data:
 - Report any breaches immediately
 - Acknowledge Health Data Bank in publications
 
-#### 5.4.4 Reporting and Documentation
+#### 5.4.3 Reporting and Documentation
 
 **Research Reports**:
-1. Click "Create Report"
-2. Select report type:
-   - Data summary report
-   - Statistical analysis report
-   - Progress report
-   - Final study report
-3. Add:
-   - Research objectives
-   - Methods
-   - Results/findings
-   - Conclusions
-   - References
-4. Include tables/charts
-5. Save report
-6. Share with collaborators
-7. Export as PDF
+1. Click "Generate Report"
+2. Select an existing cohort or create a new one with the cohort form
+3. Select desired metrics
+4. Click Estimate Size to check if cohort size is sufficient for report generation
+5. Click Generate Report
+6. Success Message shown, you new report will appear in the reports list
 
 **Study Publications**:
 - Acknowledge Health Data Bank in publications
@@ -1247,20 +1001,11 @@ Admin accounts require enhanced security:
 
 | Widget | Purpose |
 |--------|---------|
-| **System Health** | Overall system status |
-| **User Statistics** | Total users by role |
-| **Recent Activity** | Latest system actions |
-| **Pending Approvals** | Forms awaiting approval |
-| **Alerts** | Critical issues |
-| **Database Status** | Database health metrics |
-
-**Key Metrics Displayed**:
-- Total users by role
-- Active sessions
-- Data volume
-- System uptime
-- Error rates
-- Backup status
+| **Audti Log** | Review system activity, monitor access to data, and export filtered audit records |
+| **Report Review** | Review flagged reports |
+| **Form Review** | Approve/Deny new/updated form templates |
+| **Database Management** | Database info and maintenance |
+| **Account Management** | Create/Update/Delete accounts |
 
 ### 6.4 Core Features Available
 
@@ -1343,42 +1088,6 @@ Admin accounts require enhanced security:
 
 #### 6.4.2 Form Template Management
 
-**Creating Form Templates**:
-1. Click "Forms" in menu
-2. Click "Create New Form"
-3. Enter form details:
-   - Form name
-   - Description
-   - Category/type
-   - Purpose
-4. Add form fields:
-   - Field name
-   - Field type (text, number, dropdown, etc.)
-   - Required/optional
-   - Validation rules
-   - Help text
-5. Set form properties:
-   - Frequency (one-time, recurring)
-   - Available date range
-   - Target audience
-6. Save as draft
-7. Preview form
-8. Submit for approval
-
-**Editing Existing Forms**:
-1. Search for form by name
-2. Click form to open
-3. Click "Edit"
-4. Modify:
-   - Form metadata
-   - Field definitions
-   - Validation rules
-   - Help text
-5. Add/remove fields
-6. Reorder fields
-7. Preview changes
-8. Submit new version
-
 **Approving Form Templates**:
 1. Click "Forms" → "Pending Approval"
 2. View submitted forms
@@ -1420,7 +1129,7 @@ Admin accounts require enhanced security:
 #### 6.4.3 Report Review and Management
 
 **Reviewing User-Generated Reports**:
-1. Click "Reports" in menu
+1. Click "Report Review" in menu
 2. View submitted reports by users/providers
 3. Click report to review
 4. Check:
@@ -1543,15 +1252,11 @@ Admin accounts require enhanced security:
 
 **Exporting Audit Reports**:
 1. Generate report
-2. Select format:
-   - PDF
-   - CSV
-   - Excel
-3. Choose data to include
-4. Click "Export"
-5. Download report
-6. File is signed/timestamped
-7. Archive for records
+2. Choose data to include
+3. Click "Export CSV"
+4. Download report
+5. File is signed/timestamped
+6. Archive for records
 
 #### 6.4.6 Admin Profile
 
@@ -1564,7 +1269,6 @@ Admin accounts require enhanced security:
 3. Modify preferences:
    - Notification settings
    - Report defaults
-   - Dashboard customization
 4. Save changes
 
 **Admin Settings**:
@@ -1597,7 +1301,6 @@ Admins can:
 
 Admins can:
 - Create user accounts
-- Create form templates
 - Create roles/permissions
 - Generate system reports
 - Create database backups
@@ -1607,7 +1310,6 @@ Admins can:
 
 Admins can:
 - Edit user information
-- Modify form templates
 - Update system settings
 - Change user roles
 - Update database records
@@ -1943,7 +1645,6 @@ Admins have:
    - Read instructions
    - Enter responses to questions
    - Real-time validation provides feedback
-   - Save progress between sections
    - Review responses before submission
 
 4. **Submit Form**
@@ -1953,14 +1654,8 @@ Admins have:
    - Receive success notification
    - Note submission timestamp
 
-5. **Review Submission**
-   - View submitted form in "My Responses"
-   - Check data accuracy
-   - See form used in health summary
-   - Share with provider if needed
-
-6. **Track Progress**
-   - Click "Progress" to see trends
+5. **Track Progress**
+   - Click "My Progress" to see trends
    - Compare current to previous submissions
    - View progress toward health goals
    - Export progress report if needed
@@ -1987,14 +1682,7 @@ Admins have:
    - Note active health goals
    - Check allergy/medication lists
 
-4. **Review Detailed Entries**
-   - Click "Health Entries" tab
-   - View all submitted health data
-   - Sort by date (newest first)
-   - Click entry for details
-   - Interpret data in clinical context
-
-5. **Add Clinical Notes**
+4. **Add Clinical Notes**
    - Click "Notes" tab
    - Click "Add New Note"
    - Select note type
@@ -2002,13 +1690,13 @@ Admins have:
    - Document recommendations
    - Save note with timestamp
 
-6. **Generate Report**
+5. **Generate Report**
    - Click "Reports" tab
    - Click "Generate Report"
    - Select report type and date range
    - Choose metrics to include
    - Generate report
-   - Download as PDF or print
+   - Download as CSV
 
 ### Scenario 3: A Researcher Accessing Data for a Study
 
