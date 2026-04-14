@@ -15,10 +15,10 @@ admin governs forms and auditing.
 Demo data props:
 
 - Accounts to log in with:
-    - user@demo.com, Password
-    - provider@demo.com, Password
-    - researcher@demo.com, Password
-    - admin@demo.com, Password
+    - user@demo.com, Password4
+    - provider@demo.com, Password4
+    - researcher@demo.com, Password4
+    - admin@demo.com, Password4
   
 - One approved form already exists
   -  Demo form: Weekly Vitals & Symptoms
