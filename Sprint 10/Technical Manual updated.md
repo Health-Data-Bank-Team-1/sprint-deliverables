@@ -388,6 +388,73 @@ Audit logging is handled centrally through `AuditLogger`, allowing multiple syst
 
 **RBAC Enforcement:**  
 Role-based access control is enforced through Laravel middleware and the Spatie Permission package. At the service and controller levels, this ensures that users only access functionality and data appropriate to their role, such as User, Provider, Researcher, or Admin.  
+
+### 3.2.3.1 Stretch Feature Services
+
+The stretch features are supported by a small set of focused backend components.
+
+**Notification and Reminder Components:**
+- `ProcessScheduledReminders` checks active reminder rules and decides whether a reminder should be generated
+- `ReminderSetting` stores reminder frequency, activation state, next run time, and last sent time
+- `FormSubmission` is checked to determine whether the user has already submitted data for the required period
+- `Notification` stores in-system notification records linked to an `account_id`
+- `Notifications` Livewire component retrieves notifications for the authenticated user account, orders unread items first, and supports marking notifications as read
+
+**Suggestion Components:**
+- `SuggestionService` generates rule-based suggestions from aggregated reporting data and trend calculations
+- `PersonalSummaryService` prepares summary averages and counts used by the personal reporting flow
+- `MeSummaryController` combines summary output with suggestion output and returns both in a single API response
+- `UserSuggestions` Livewire component renders suggestion results for the authenticated user over a selected date range
+- `HealthMetricRegistry` is used to validate metric keys and control threshold-based suggestion logic
+
+**Supporting Security and Privacy Components:**
+- `AuditLogger` records important actions while blocking obviously sensitive keys from being written into audit payloads
+- `KThresholdService` suppresses researcher-facing outputs when cohort size is below the minimum threshold
+- `HealthDataEncryptionService` encrypts and decrypts protected health data stored in the system
+
+### 3.2.3.2 System Component Interaction Overview
+
+The system uses a layered interaction pattern in which routes, controllers, services, models, and audit/privacy checks work together for each major feature.
+
+```text
+User / Provider / Researcher / Admin
+        ↓
+Route Layer (`routes/web.php`, `routes/api.php`)
+        ↓
+Controller or Livewire Component
+        ├─ Web UI path:
+        │   ├─ `Notifications`
+        │   └─ `UserSuggestions`
+        └─ API path:
+            ├─ `MeSummaryController`
+            ├─ `DashboardReportController`
+            └─ `ProviderFeedbackController`
+        ↓
+Service Layer
+        ├─ `SuggestionService`
+        ├─ `PersonalSummaryService`
+        ├─ `AuditLogger`
+        ├─ `KThresholdService`
+        └─ `HealthDataEncryptionService`
+        ↓
+Model Layer
+        ├─ `Notification`
+        ├─ `ReminderSetting`
+        ├─ `FormSubmission`
+        ├─ `ProviderFeedback`
+        └─ Other domain models
+        ↓
+Database
+        ↓
+Response / View Rendering / Redirect
+
+```
+**Interaction Notes:**
+- User-facing reminder delivery is currently implemented as an in-system notification flow
+- Suggestion generation is currently integrated into the personal summary/reporting path rather than persisted as a separate long-term suggestion history
+- Audit logging is invoked across multiple workflows to keep traceability consistent
+- Privacy controls are enforced both through role checks and through suppression/encryption logic where applicable
+
 #### 3.2.4 Repository Layer
 
 **Location**: `app/Repositories/`
@@ -558,6 +625,61 @@ Authorization: Bearer {token}
 ```
 
 ---
+
+### 4.4 Example API Requests and Responses
+
+The following examples show the request and response style used by implemented backend endpoints.
+
+#### 4.4.1 Personal Summary with Suggestions
+
+**Endpoint**:  
+`GET /api/me/summary`
+
+**Example Request**:
+```http
+GET /api/me/summary?from=2026-03-01&to=2026-03-31&keys=weight,blood_pressure HTTP/1.1
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Example Successful Response (200 OK)**
+```
+{
+    "from": "2026-03-01T00:00:00+00:00",
+    "to": "2026-03-31T00:00:00+00:00",
+    "averages": {
+        "weight": 72.4,
+        "blood_pressure": 128.5
+    },
+    "counts": {
+        "weight": 8,
+        "blood_pressure": 8
+    },
+    "suggestions": [
+        {
+            "type": "high_value",
+            "metric": "blood_pressure",
+            "severity": "high",
+            "title": "High value detected",
+            "message": "Recent average values are above the configured threshold.",
+            "context": {
+                "label": "Blood Pressure",
+                "average": 128.5,
+                "threshold": 120
+            }
+        }
+    ]
+}
+```
+
+**Example Validation / Account Error Response (422 Unprocessable Entity)**
+```
+
+{
+    "message": "User has no account attached."
+}
+
+```
 
 ## 5. Frontend Architecture
 
@@ -973,6 +1095,78 @@ Mark Notification as Read
 End Workflow
 
 ```
+
+### 7.8.1 Notification and Reminder System Architecture
+
+The notification and reminder feature is implemented as a scheduled backend workflow that creates in-system notification records for users whose submission requirements are not satisfied.
+
+**Core Components Involved:**
+- `ProcessScheduledReminders`
+- `ReminderSetting`
+- `FormSubmission`
+- `Notification`
+- `Notifications` Livewire component
+- Notification routes in `routes/web.php`
+
+**Architecture Summary:**
+1. The scheduler runs the reminder processing job
+2. The job loads active reminder rules from `ReminderSetting`
+3. The job checks user submission state using `FormSubmission`
+4. If the required submission is missing, the system checks for duplicate reminder generation
+5. A new `Notification` record is created for the user account
+6. The notification is displayed through the notifications UI
+7. When the user opens the notification, the item is marked as read and may redirect to the related page
+
+**Current Reminder Frequencies Implemented:**
+- `daily`
+- `weekly`
+- `todo`
+
+**Current Delivery Channel Implemented in Code:**
+- In-system notification center
+
+**Architecture Flow:**
+```text
+Scheduler / Console Trigger
+        ↓
+`ProcessScheduledReminders`
+        ↓
+Load active `ReminderSetting` rows
+        ↓
+For each reminder:
+        ├─ Check account_id
+        ├─ Check frequency
+        ├─ Query `FormSubmission`
+        └─ Determine completion state
+        ↓
+Duplicate reminder check
+        ↓
+Create `Notification`
+        ├─ account_id
+        ├─ type = reminder
+        ├─ message
+        ├─ link
+        └─ status = unread
+        ↓
+Store in notifications table
+        ↓
+Render in `Notifications` Livewire component
+        ↓
+User opens notification
+        ├─ access ownership checked
+        ├─ status updated to read
+        └─ optional redirect to linked page
+
+```
+
+**Security and Ownership Controls**
+
+Notification records are linked to account_id
+Notification views only load records for the authenticated user account
+Opening a notification performs an ownership check before marking it as read or redirecting
+This prevents cross-account notification access
+
+
 ### 7.9 Suggestion System Workflow
 
 ```
@@ -1019,6 +1213,84 @@ Log Suggestion Event (Audit Log)
 End Workflow
 
 ```
+
+### 7.9.1 Suggestion System Architecture
+
+The suggestion subsystem is implemented as a backend rule engine that uses aggregated reporting data and trend calculations to generate non-clinical user-facing suggestions.
+
+**Core Components Involved:**
+- `SuggestionService`
+- `ReportingAggregationService`
+- `TrendCalculationService`
+- `HealthMetricRegistry`
+- `PersonalSummaryService`
+- `MeSummaryController`
+- `UserSuggestions` Livewire component
+
+**Architecture Summary:**
+1. A date range is selected or defaulted
+2. The system gathers aggregate values for the authenticated account
+3. The system checks metric definitions and thresholds through `HealthMetricRegistry`
+4. Trend direction is evaluated using trend data points
+5. Suggestion rules are applied for:
+   - no data
+   - insufficient data
+   - high values above threshold
+   - negative trends
+   - positive trends
+6. Duplicate suggestions of the same type/metric pair are removed
+7. Suggestions are sorted by severity
+8. The result is returned either through the summary API or the suggestions UI
+
+**Current Output Characteristics:**
+- Suggestions are generated dynamically
+- Suggestions are returned as structured arrays
+- Suggestions are currently integrated into the `/api/me/summary` response
+- Suggestions are not currently stored as a separate persistent history in the current backend design
+
+**Architecture Flow:**
+```text
+Authenticated User Request
+        ↓
+`MeSummaryController` or `UserSuggestions`
+        ↓
+Resolve account_id and date range
+        ↓
+`SuggestionService::generateForAccount()`
+        ↓
+`ReportingAggregationService`
+        └─ collect averages and counts
+        ↓
+`TrendCalculationService`
+        └─ calculate first/last trend points
+        ↓
+`HealthMetricRegistry`
+        ├─ validate metric keys
+        ├─ determine labels
+        ├─ check numeric compatibility
+        └─ check threshold/trend configuration
+        ↓
+Rule Evaluation
+        ├─ no data
+        ├─ insufficient data
+        ├─ threshold exceeded
+        ├─ negative trend
+        └─ positive trend
+        ↓
+Deduplicate and sort by severity
+        ↓
+Return structured suggestion payload
+        ↓
+Display on dashboard / suggestion page / summary response
+
+```
+
+**Design Notes**
+
+The suggestion system is non-clinical and rule-based
+It depends on the quality and availability of recent user data
+It reuses reporting services rather than building a separate analytics pipeline
+It keeps the output explainable because suggestion types are based on explicit rules
 
 ### 7.10 Stretch Feature Integration
 
@@ -1169,6 +1441,65 @@ Route::middleware(['auth:sanctum', 'role:provider'])->group(function () {...});
 
 ---
 
+### 8.6 Privacy Enforcement and Data Protection Workflow
+
+The system applies privacy protection at several layers: authentication, role checks, data minimization, encryption, suppression logic, and audit logging.
+
+```text
+User Request / Scheduled Process
+        ↓
+Authentication Check
+        ├─ session auth or Sanctum token
+        └─ reject unauthenticated access
+        ↓
+Role / Permission Validation
+        ├─ `role:{name}` middleware
+        └─ route-level protection
+        ↓
+Account Ownership / Scope Check
+        ├─ user account_id mapping
+        ├─ notification ownership check
+        └─ provider/researcher scope restrictions
+        ↓
+Input Validation
+        ├─ required fields
+        ├─ type/date/uuid validation
+        └─ invalid request rejected
+        ↓
+Sensitive Data Handling
+        ├─ protected health data encrypted at rest
+        ├─ researcher outputs aggregated only
+        └─ raw PHI not exposed in normal reporting paths
+        ↓
+Privacy Enforcement for Aggregates
+        ├─ cohort filters applied
+        ├─ cohort counted
+        └─ `KThresholdService` suppresses small cohorts
+        ↓
+Audit Logging
+        ├─ event recorded
+        ├─ sensitive keys blocked
+        └─ request metadata retained for traceability
+        ↓
+Response Returned
+        ├─ only permitted data shown
+        └─ unauthorized or unsafe output blocked
+```
+
+Privacy Controls Used in the Current System 
+
+Role-based access control through middleware
+Account ownership checks for user-specific records
+AES-based encryption for protected health data storage
+K-threshold suppression for researcher aggregate access
+Audit logging with guardrails against sensitive value logging
+Output limited to aggregate or scoped account data depending on role
+
+ Notification and Suggestion Privacy Notes 
+
+Notifications are linked to a specific account and are only viewable by that account owner
+Suggestion generation uses analyzed and aggregated values rather than exposing raw private data in the suggestion payload
+Audit logs record system actions without storing raw passwords, tokens, or direct health-content fields
 ## 9. Database Schema Overview
 
 ### 9.1 Core Tables
@@ -1467,6 +1798,43 @@ Services defined in `compose.yaml`:
 - Code splitting for large components
 - Asset versioning prevents cache issues
 
+### 15.4 System Limitations and Design Trade-offs
+
+The current system design favors clarity, privacy protection, and implementation simplicity, but this also creates some practical trade-offs.
+
+#### Current Limitations
+
+- Reminder delivery in the current implementation is centered on the in-system notification flow
+- Suggestion generation is dynamic and currently tied to the reporting/summary path rather than a separate persisted suggestion history
+- Dashboard trend reporting currently supports a limited metric set and groups results by day, week, or month
+- Suggestion quality depends on available data volume and supported metric definitions
+- Some advanced notification preference behavior described in planning documents is not fully represented in the implemented backend flow
+- The architecture uses synchronous request-response handling for many features, which is simpler to understand but less flexible for heavier analytics workloads
+
+#### Design Trade-offs
+
+**1. Simplicity vs Feature Depth**
+The system reuses existing reporting services to generate suggestions. This reduces duplication and keeps the design easier to maintain, but it also means suggestions are tightly coupled to current reporting outputs.
+
+**2. Privacy vs Data Detail**
+Researcher-facing outputs use suppression and aggregation rules. This protects users from re-identification, but it limits access to fine-grained detail and may suppress useful small-cohort outputs.
+
+**3. Traceability vs Minimal Exposure**
+Audit logging is applied broadly for accountability. At the same time, the logger blocks obviously sensitive keys so that logging does not become a privacy risk. This improves safety but may reduce the amount of debugging detail available in some failure cases.
+
+**4. Immediate Usability vs Long-Term Analytics**
+In-system notifications and dashboard suggestions provide direct value to end users quickly. However, without separate persistence and history for suggestions, long-term suggestion tracking and analysis remain limited.
+
+**5. Maintainability vs Exhaustive Flexibility**
+The current design keeps service responsibilities reasonably focused and understandable for a student project codebase. The trade-off is that not every possible reminder channel, preference rule, or analytics workflow is implemented in full detail.
+
+#### Future Improvement Opportunities
+
+- Add persistent suggestion history and lifecycle tracking
+- Add explicit notification delivery-channel preferences and delivery-status tracking
+- Expand dashboard trend metrics beyond submission count
+- Move heavier reminder/analytics tasks more fully into queued background processing
+- Add richer user-facing configuration for reminder and suggestion behavior
 ---
 
 ## 16. Monitoring and Logging
@@ -1484,6 +1852,74 @@ Services defined in `compose.yaml`:
 - User-friendly error messages
 - Detailed logs for debugging
 - Email alerts for critical errors
+
+### 16.2.1 Error Handling Strategy
+
+The system applies error handling at the validation, controller, service, and audit levels so that failures are visible to developers while still returning controlled messages to users.
+
+**Main Error-Handling Goals:**
+- stop invalid requests early
+- return safe and understandable client responses
+- log important failures for debugging and compliance
+- avoid exposing sensitive internal details in normal user responses
+
+**Error Handling Layers:**
+
+**1. Request Validation Layer**
+- Controllers validate required inputs before business logic runs
+- Invalid requests return structured validation errors
+- Common checks include required fields, UUID format, date ordering, and metric restrictions
+
+**2. Authorization and Ownership Layer**
+- Unauthorized access is blocked through middleware and explicit ownership checks
+- Examples include role-protected routes and notification ownership validation
+- These failures return 403-style access denials rather than exposing protected data
+
+**3. Service / Business Logic Layer**
+- Services use explicit checks for conditions such as:
+  - missing account mapping
+  - insufficient cohort size
+  - invalid metric configuration
+  - decryption failure
+- Some failures are converted into controlled exceptions so the caller can respond safely
+
+**4. Audit Layer**
+- Important failure or blocked events can still be recorded through `AuditLogger`
+- The logger itself includes safeguards to prevent sensitive values from being written to audit data
+
+**5. Operational Logging Layer**
+- Application logs provide additional debugging detail for developers and administrators
+- Production configuration should keep detailed internals out of end-user responses while still preserving enough operational logging for diagnosis
+
+**Example Error Paths in the Current Codebase:**
+- validation failure for bad request payloads
+- blocked access when account mapping fails
+- blocked notification access when account ownership does not match
+- suppressed researcher output when a cohort is below the minimum threshold
+- wrapped runtime failures during encrypted health data decryption
+
+**Error Handling Flow:**
+```text
+Request or Background Task
+        ↓
+Input validation
+        ├─ invalid → structured error response
+        └─ valid → continue
+        ↓
+Auth / role / ownership check
+        ├─ unauthorized → block access
+        └─ authorized → continue
+        ↓
+Service logic execution
+        ├─ business rule failure → controlled exception / safe response
+        ├─ privacy rule failure → suppression / blocked response
+        └─ success → continue
+        ↓
+Audit and application logging
+        ↓
+Return safe response to client
+
+```
 
 ### 16.3 Health Checks
 
